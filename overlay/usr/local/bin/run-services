@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+SERVICES=$1
+
+# special: web should be replaced with nginx,php-fpm
+if [[ $SERVICES == *"web"* ]]; then
+  SERVICES=${SERVICES//web/"nginx,php-fpm"}
+fi
+
+# typically one or more of cron, nginx, php-fpm (comma separated for multiple)
+echo "$SERVICES" | tr ',' '\n' | while read SERVICE; do
+  SERVICE_FILE="/etc/runit/runsvdir/default/$SERVICE/down"
+
+  if [[ -f "$SERVICE_FILE" ]]; then
+    rm "$SERVICE_FILE"
+  fi
+done
