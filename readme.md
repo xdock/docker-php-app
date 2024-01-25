@@ -12,7 +12,7 @@ version: '3.7'
 services:
 
   web:
-    image: xdock/php-app:8.2-latest
+    image: ghcr.io/xdock/php-app:8.2-2024.01
     command: run-services nginx,php-fpm
     environment:
       APP_NAME: my-project-name
