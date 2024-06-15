@@ -19,7 +19,6 @@ EXPOSE 80
 # Generally don't override these
 ENV COMPOSER_HOME="/root/.composer" \
     COMPOSER_ALLOW_SUPERUSER=1 \
-    NODE_MAJOR="20" \
     PATH="$PATH:/app/vendor/bin:/app:/app/node_modules/.bin:." \
     PHP_IDE_CONFIG="serverName=localhost" \
     TERM="xterm-256color"
@@ -38,7 +37,7 @@ ENV APP_NAME="xdock-php-app" \
 RUN --mount=type=bind,source=build/build-image.sh,target=/build/build-image.sh \
     bash /build/build-image.sh
 
-COPY --from=php-extensions /usr/lib/php/20220829/dio.so /usr/lib/php/20220829/dio.so
+COPY --from=php-extensions /build/php-extensions/ /usr/lib/php/20220829
 COPY overlay/ /
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]

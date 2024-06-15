@@ -1,5 +1,7 @@
 #!/bin/bash
 
+NODE_MAJOR="20"
+
 curl -sL https://deb.nodesource.com/setup_$NODE_MAJOR.x | bash -
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
@@ -38,6 +40,7 @@ install_clean \
   php8.2-protobuf \
   php8.2-pspell \
   php8.2-raphf \
+  php8.2-rdkafka \
   php8.2-readline \
   php8.2-redis \
   php8.2-soap \
