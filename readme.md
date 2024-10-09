@@ -7,12 +7,10 @@ See the main readme here: https://github.com/xdock/docker-php
 Create a `docker-compose.yml` file in the root of your project:
 
 ```
-version: '3.7'
-
 services:
 
   web:
-    image: ghcr.io/xdock/php-app:8.2-2024.01
+    image: ghcr.io/xdock/php-app:8.3-2024.08
     command: run-services web
     environment:
       APP_NAME: my-project-name

@@ -6,7 +6,6 @@
 /app/public
 /app/resources
 /app/routes
+/app/src
 /app/storage
 /app/tests
-
-/app/src

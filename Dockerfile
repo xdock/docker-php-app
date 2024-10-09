@@ -1,16 +1,4 @@
-##
-## Multistage Part: PHP Extensions
-##
-FROM phusion/baseimage:jammy-1.0.1 AS php-extensions
-
-RUN --mount=type=bind,source=build/build-php-extensions.sh,target=/build/build-php-extensions.sh \
-    bash /build/build-php-extensions.sh
-
-
-##
-## Image Start
-##
-FROM phusion/baseimage:jammy-1.0.1 AS image
+FROM phusion/baseimage:noble-1.0.0
 
 LABEL maintainer="Ralph Schindler"
 
@@ -34,11 +22,11 @@ ENV APP_NAME="xdock-php-app" \
     PHP_FPM_CONF_PM="dynamic" \
     PHP_FPM_CONF_PM_MAX_CHILDREN="5"
 
-RUN --mount=type=bind,source=build/build-image.sh,target=/build/build-image.sh \
-    bash /build/build-image.sh
+RUN --mount=type=bind,source=build/,target=/build/build-01-packages.sh bash /build/build-01-packages.sh
 
-COPY --from=php-extensions /build/php-extensions/ /usr/lib/php/20220829
 COPY overlay/ /
+
+RUN --mount=type=bind,source=build/,target=/build/build-02-setup.sh bash /build/build-02-setup.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 
