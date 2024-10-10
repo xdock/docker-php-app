@@ -11,6 +11,7 @@ install_clean \
   jq \
   mysql-client \
   nano \
+  netcat-openbsd \
   nginx \
   nodejs \
   php-pear \

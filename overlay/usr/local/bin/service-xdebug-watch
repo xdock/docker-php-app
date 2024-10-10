@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+XDEBUG_HOST="${XDEBUG_HOST:=host.docker.internal}"
+XDEBUG_PORT="${XDEBUG_PORT:=9000}"
+IS_XDEBUG_ON=0;
+
+xdebug off
+
+while sleep 1;
+  # shellcheck disable=SC2034 disable=SC2086
+  nc_return_output=$(nc -z $XDEBUG_HOST $XDEBUG_PORT -w 1 >/dev/null 2>&1)
+  nc_return_code=$?
+
+  if [ "$nc_return_code" -eq 1 ]; then
+    if [ $IS_XDEBUG_ON -eq 1 ]; then
+      xdebug -q off
+      IS_XDEBUG_ON=0
+    fi
+  else
+    if [ $IS_XDEBUG_ON -eq 0 ]; then
+      xdebug -q on
+      IS_XDEBUG_ON=1
+    fi
+  fi
+
+  do false;
+done

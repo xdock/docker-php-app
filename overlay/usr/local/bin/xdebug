@@ -1,25 +1,63 @@
 #!/bin/bash
 
-case $1 in
+QUIET=0
+
+# function to restart php-fpm, using quiet if necessary
+restart_php_fpm () {
+  if [ $QUIET -eq 1 ]; then
+    sv restart php-fpm > /dev/null
+  else
+    sv restart php-fpm
+  fi
+}
+
+# handle opts
+while getopts ":q" option; do
+  case $option in
+    q)
+      QUIET=1
+      ;;
+    *)
+      echo "Bad option ${option} provided)"
+      exit 1
+      ;;
+  esac
+done
+
+shift "$((OPTIND -1))"
+
+DIRECTION=$1
+
+# Handle Args
+case $DIRECTION in
 
   on)
-    echo "enabling xdebug, using always on settings, restarting php-fpm"
-    cp /etc/php/8.2/mods-available/xdebug/xdebug-debug-on.ini /etc/php/8.2/mods-available/xdebug.ini
-    phpenmod xdebug
-    sv restart php-fpm
+    if [ $QUIET -eq 0 ]; then
+      echo "enabling xdebug, using always on settings, restarting php-fpm"
+    fi
+
+    phpdismod xdebug-on xdebug-trigger
+    phpenmod xdebug-on
+    restart_php_fpm
     ;;
 
   off)
-    echo "disabling xdebug, restarting php-fpm"
-    phpdismod xdebug
-    sv restart php-fpm
+    if [ $QUIET -eq 0 ]; then
+      echo "disabling xdebug, restarting php-fpm"
+    fi
+
+    phpdismod xdebug-on xdebug-trigger
+    restart_php_fpm
     ;;
 
   trigger)
-    echo "enabling xdebug, using trigger settings, restarting php-fpm"
-    cp /etc/php/8.2/mods-available/xdebug/xdebug-debug-trigger.ini /etc/php/8.2/mods-available/xdebug.ini
-    phpenmod xdebug
-    sv restart php-fpm
+    if [ $QUIET -eq 0 ]; then
+      echo "enabling xdebug, using trigger settings, restarting php-fpm"
+    fi
+
+    phpdismod xdebug-on xdebug-trigger
+    phpenmod xdebug-trigger
+    restart_php_fpm
     ;;
 
   *)

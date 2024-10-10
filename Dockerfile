@@ -20,13 +20,17 @@ ENV APP_NAME="xdock-php-app" \
     PHP_FPM_INI_POST_MAX_SIZE="10M" \
     PHP_FPM_INI_UPLOAD_MAX_FILESIZE="10M" \
     PHP_FPM_CONF_PM="dynamic" \
-    PHP_FPM_CONF_PM_MAX_CHILDREN="5"
+    PHP_FPM_CONF_PM_MAX_CHILDREN="5" \
+    XDEBUG_HOST="host.docker.internal" \
+    XDEBUG_PORT="9000"
 
-RUN --mount=type=bind,source=build/,target=/build/build-01-packages.sh bash /build/build-01-packages.sh
+RUN --mount=type=bind,source=build/build-01-packages.sh,target=/build/build-01-packages.sh \
+    bash /build/build-01-packages.sh
 
 COPY overlay/ /
 
-RUN --mount=type=bind,source=build/,target=/build/build-02-setup.sh bash /build/build-02-setup.sh
+RUN --mount=type=bind,source=build/build-02-setup.sh,target=/build/build-02-setup.sh \
+    bash /build/build-02-setup.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 

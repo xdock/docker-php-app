@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+if [[ $(sv status php-fpm | head -n 1) == "run:"* ]]; then
+    if [[ -f "/app/composer.json" ]]; then
+        if [[ $(jq -r '.scripts."post-update-cmd" | index("sv restart php-fpm")' /app/composer.json) == "null" ]]; then
+            # put warning in a heredoc
+            read -r -d '' WARNING << EOM
+
+# Composer Configuration Required
+
+The composer.json file should contain "sv restart php-fpm" in the
+"post-update-cmd" scripts section. Example:
+
+    "scripts": {
+        "post-update-cmd": [
+            ...
+            "sv restart php-fpm"
+        ]
+    }
+
+This is necessary in local environments since this image does aggressive
+optimization (via PHP's Opcache, with 0 timestamp revalidation) of vendor
+files to ensure better overall performance.
+
+EOM
+            echo "$WARNING"
+        fi
+    fi
+fi
