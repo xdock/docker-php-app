@@ -24,13 +24,13 @@ ENV APP_NAME="xdock-php-app" \
     XDEBUG_HOST="host.docker.internal" \
     XDEBUG_PORT="9000"
 
-RUN --mount=type=bind,source=build/build-01-packages.sh,target=/build/build-01-packages.sh \
-    bash /build/build-01-packages.sh
+RUN --mount=type=bind,source=build/baseimage-20-packages.sh,target=/build/baseimage-20-packages.sh \
+    bash /build/baseimage-20-packages.sh
 
 COPY overlay/ /
 
-RUN --mount=type=bind,source=build/build-02-setup.sh,target=/build/build-02-setup.sh \
-    bash /build/build-02-setup.sh
+RUN --mount=type=bind,source=build/baseimage-21-setup.sh,target=/build/baseimage-21-setup.sh \
+    bash /build/baseimage-21-setup.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint"]
 

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+# This script is run as a Docker (formated image) ONBUILD RUN command in a single layer
+# OR in a docker-compose environment after updating the codebase.
+
+cd /app || exit 1
+
+if [ -f /app/composer.json ]; then
+  echo "Installing PHP dependencies"
+
+  composer install --no-progress --no-dev
+  composer clear-cache
+fi
+
+if [ -f /app/package-lock.json ]; then
+  # install packages
+  echo "Installing Node.js dependencies"
+
+  npm ci --no-progress
+
+  # if there is a known production command, run it
+  if jq -e '.scripts.production' package.json > /dev/null; then
+    echo "Running npm run production"
+
+    npm run production
+  elif jq -e '.scripts.build' package.json > /dev/null; then
+    echo "Running npm run build"
+
+    npm run build
+  fi
+
+  echo "Cleaning up Node.js dependencies"
+
+  rm -rf /app/node_modules
+fi

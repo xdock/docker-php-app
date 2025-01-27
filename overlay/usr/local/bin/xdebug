@@ -4,6 +4,13 @@ QUIET=0
 
 # function to restart php-fpm, using quiet if necessary
 restart_php_fpm () {
+  # if php-fpm is not running, return
+  if [ "$(sv status php-fpm | grep -c 'run:')" -eq 0 ]; then
+    return
+  fi
+
+  echo ", restarting php-fpm"
+
   if [ $QUIET -eq 1 ]; then
     sv restart php-fpm > /dev/null
   else
@@ -33,29 +40,29 @@ case $DIRECTION in
 
   on)
     if [ $QUIET -eq 0 ]; then
-      echo "enabling xdebug, using always on settings, restarting php-fpm"
+      echo -n "enabling xdebug, using always on settings"
     fi
 
-    phpdismod xdebug-on xdebug-trigger
-    phpenmod xdebug-on
+    phpdismod xdebug xdebug-trigger
+    phpenmod xdebug
     restart_php_fpm
     ;;
 
   off)
     if [ $QUIET -eq 0 ]; then
-      echo "disabling xdebug, restarting php-fpm"
+      echo -n "disabling xdebug"
     fi
 
-    phpdismod xdebug-on xdebug-trigger
+    phpdismod xdebug xdebug-trigger
     restart_php_fpm
     ;;
 
   trigger)
     if [ $QUIET -eq 0 ]; then
-      echo "enabling xdebug, using trigger settings, restarting php-fpm"
+      echo -n "enabling xdebug, using trigger settings"
     fi
 
-    phpdismod xdebug-on xdebug-trigger
+    phpdismod xdebug xdebug-trigger
     phpenmod xdebug-trigger
     restart_php_fpm
     ;;
@@ -64,3 +71,5 @@ case $DIRECTION in
     echo "must be one of on, off, or trigger"
     ;;
 esac
+
+printf "\n"
