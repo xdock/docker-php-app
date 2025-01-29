@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# shellcheck source=https://deb.nodesource.com/setup_23.x
 source <(curl -sL https://deb.nodesource.com/setup_23.x)
 
 apt-add-repository -y ppa:ondrej/php
@@ -19,6 +20,7 @@ install_clean \
   php8.4-cli \
   php8.4-common \
   php8.4-curl \
+  php8.4-dio \
   php8.4-enchant \
   php8.4-fpm \
   php8.4-gd \
@@ -52,16 +54,10 @@ install_clean \
   unzip \
   yarn
 
-RUN cd /usr/local/src; \
-  curl -LO https://github.com/DataDog/dd-trace-php/releases/latest/download/datadog-setup.php; \
-  php datadog-setup.php --php-bin=all; \
-  cp /etc/php/8.4/cli/conf.d/98-ddtrace.ini /etc/php/8.4/mods-available/ddtrace.ini; \
-  rm /etc/php/8.4/*/conf.d/98-ddtrace.ini
-
-# copy files we will overwrite
-cp /etc/php/8.4/fpm/php-fpm.conf /etc/php/8.4/fpm/php-fpm.conf.dist
-cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.dist
+# backup files we will overwrite
 cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.dist
+cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.dist
+cp /etc/php/8.4/fpm/php-fpm.conf /etc/php/8.4/fpm/php-fpm.conf.dist
 
 # install composer
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
